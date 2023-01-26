@@ -55,6 +55,8 @@ dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
 currentPosition = dpiStepper.getCurrentPositionInSteps(0)[1]
 print(f"Pos = {currentPosition}")
 
+
+stop_motors = False
 #might be useful later to stop motors
 def stop_all():
     #
@@ -62,6 +64,10 @@ def stop_all():
     #
     while dpiStepper.getAllMotorsStopped() == False:
         sleep(0.02)
+
+def moving_thread(MotorNumber):
+    while not stop_motors:
+        dpiStepper.moveToRelativePositionInSteps(MotorNumber, 200, wait_to_finish_moving_flg)
 
 
 class MainScreen(Screen):
@@ -81,9 +87,10 @@ class MainScreen(Screen):
         and cancel the clock until the value is returned to 0, which the_dance function does when it is finished running"""
 
     def move(self, MotorNumber, rotation_direction):
+        stop_motors = False
 
         if dpiStepper.getAllMotorsStopped(self):
-            MotorNumber.go_until_press(rotation_direction, self.ids.speed_slider_1.value)
+            moving_thread(MotorNumber)
             print("moving!")
 
         else:
@@ -95,12 +102,13 @@ class MainScreen(Screen):
 
         #have a thread with a while True loop running this dpiStepper.moveToRelativePositionInSteps(Motor Number,  1 * steps_per_rotation, wait_to_finish_moving_flg)
         #set it up so that if an another button is pressed it stopps the thread
+        if dpiStepper.getAllMotorsStopped(self):
+            stop_motors = False
+            for i in motors:
+                moving_thread(i)
 
-        else:
-            s0.softStop()
-            print("s0: I'm softStopped!!")
-            s1.softStop()
-            print("s1. I'm softStopped!")
+
+
 
     def rayne_test_thing(self):
 
@@ -171,26 +179,24 @@ class MainScreen(Screen):
         if amount_of_revolutions > 0:
             print("slowing")
             # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
-            s0.go_until_press(s0_rotation_direction, self.freqency_to_motor_speed - 2000)
+            dpiStepper.setSpeedInStepsPerSecond(0, self.freqency_to_motor_speed - 2000)
             sleep(wait_time)
 
 
         else:
             print("speeding up")
             # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
-            s0.go_until_press(s0_rotation_direction, self.freqency_to_motor_speed + 2000)
+            dpiStepper.setSpeedInStepsPerSecond(0, self.freqency_to_motor_speed + 2000)
             sleep(wait_time * -1)
 
         print("balancing speed")
         # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
-        s0.go_until_press(s0_rotation_direction, self.freqency_to_motor_speed)
+        dpiStepper.setSpeedInStepsPerSecond(0, self.freqency_to_motor_speed)
 
     def freqency_increase(self, freqency):
         self.freqency = freqency
         self.freqency_to_motor_speed = freqency * 200
-        # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
-        s0.go_until_press(s0_rotation_direction, self.freqency_to_motor_speed)
-        s1.go_until_press(s0_rotation_direction, self.freqency_to_motor_speed)
+        dpiStepper.setSpeedInStepsPerSecond(0, self.freqency_to_motor_speed)
 
     def live_earth_quake_data(self):
         # https://manual.raspberryshake.org/udp.html use UDP on raspberry shake 1D
@@ -227,6 +233,8 @@ class MainScreen(Screen):
         #
         while dpiStepper.getAllMotorsStopped() == False:
             sleep(0.02)
+
+        stop_motors = True
 
     @staticmethod
     def exit_program():
