@@ -213,6 +213,7 @@ class MainScreen(Screen):
 
         if s0.is_busy() or s1.is_busy():
             # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
+            dpiStepper.setSpeedInStepsPerSecond(0, self.ids.speed_slider_1.value)
             s0.go_until_press(s0_rotation_direction, self.ids.speed_slider_1.value)
             s1.go_until_press(s1_rotation_direction, self.ids.speed_slider_1.value)
 
