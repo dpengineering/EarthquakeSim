@@ -195,8 +195,10 @@ class MainScreen(Screen):
         dpiStepper.setSpeedInStepsPerSecond(0, self.freqency_to_motor_speed)
 
     def freqency_increase(self, freqency):
+        #sets the frequency value and adjusts to to stepper motor speed value
         self.freqency = freqency
         self.freqency_to_motor_speed = freqency * 200
+        #sets the covnerted frequency value to steper motor speed to stepper motor speed
         dpiStepper.setSpeedInStepsPerSecond(0, self.freqency_to_motor_speed)
 
     def live_earth_quake_data(self):
@@ -209,20 +211,26 @@ class MainScreen(Screen):
         print("does the thing")
 
     def speed_change(self):
-
+        
+        #gets slider value
         self.motor_0_speed = self.ids.speed_slider_1.value
-
-        if dpiStepper.getAllMotorsStopped(self):
+        
+        #makes slider value motor speed if motor is not stopped
+        if not dpiStepper.getAllMotorsStopped(self):
             # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
             dpiStepper.setSpeedInStepsPerSecond(0, self.ids.speed_slider_1.value)
             dpiStepper.setSpeedInStepsPerSecond(1, self.ids.speed_slider_1.value)
 
     def add_10(self):
-        # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
+        #math to decrease speed by 10%
         self.motor_0_speed = self.motor_0_speed + self.motor_0_speed * .1
+
+        # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
+        dpiStepper.setSpeedInStepsPerSecond(0, int(self.motor_0_speed))
 
 
     def subtract_10(self):
+        #math to decrease speed by 10%
         self.motor_0_speed = self.motor_0_speed - self.motor_0_speed * .1
 
         # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
@@ -232,6 +240,7 @@ class MainScreen(Screen):
         #
         # now wait for both motors to stop
         #
+        #goes through motors and decelerates them to a stop
         for i in motors:
             dpiStepper.decelerateToAStop(i)
 
