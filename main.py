@@ -138,10 +138,10 @@ class MainScreen(Screen):
     def specific_control(self):
         # goes halway on spiral
         print("slowing")
-        s0.go_until_press(s0_rotation_direction, 7600)
+        dpiStepper.setSpeedInStepsPerSecond(0, 7600)
         sleep(2.25)
         print("speeding up")
-        s0.go_until_press(s0_rotation_direction, 10000)
+        dpiStepper.setSpeedInStepsPerSecond(0, 7600)
         self.current_spiral_position = .5
 
     def spiral_position_control(self, spiral_pos):
@@ -150,17 +150,17 @@ class MainScreen(Screen):
         if wait_time > 0:
             print("slowing")
             # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
-            s0.go_until_press(s0_rotation_direction, 7600)
+            dpiStepper.setSpeedInStepsPerSecond(0, 7600)
 
             sleep(wait_time)
         else:
             print("speeding up")
             # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
-            s0.go_until_press(s0_rotation_direction, 10000 + (10000 - 7600))
+            dpiStepper.setSpeedInStepsPerSecond(s0_rotation_direction, 10000 + (10000 - 7600))
             sleep(wait_time * -1)
         print("balancing speed")
         # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
-        s0.go_until_press(s0_rotation_direction, 10000)
+        dpiStepper.setSpeedInStepsPerSecond(0, 10000)
 
     def amplitude_control(self, amplitude):
         # spiral position in fraction of the whole
@@ -220,13 +220,13 @@ class MainScreen(Screen):
     def add_10(self):
         # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
         self.motor_0_speed = self.motor_0_speed + self.motor_0_speed * .1
-        s0.go_until_press(s0_rotation_direction, int(self.motor_0_speed))
+
 
     def subtract_10(self):
         self.motor_0_speed = self.motor_0_speed - self.motor_0_speed * .1
 
         # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
-        s0.go_until_press(s0_rotation_direction, int(self.motor_0_speed))
+        dpiStepper.setSpeedInStepsPerSecond(0, int(self.motor_0_speed))
 
     def soft_stop(self):
         #
@@ -234,7 +234,7 @@ class MainScreen(Screen):
         #
         for i in motors:
             dpiStepper.decelerateToAStop(i)
-            
+
         stop_motors = True
 
     @staticmethod
