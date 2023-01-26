@@ -57,6 +57,7 @@ print(f"Pos = {currentPosition}")
 
 
 stop_motors = False
+
 #might be useful later to stop motors
 def stop_all():
     #
@@ -94,7 +95,8 @@ class MainScreen(Screen):
             print("moving!")
 
         else:
-            MotorNumber.softStop()
+            stop_motors = True
+            dpiStepper.decelerateToAStop(MotorNumber)
             print("s0: I'm softStopped!")
 
     def move_both(self):
@@ -112,8 +114,8 @@ class MainScreen(Screen):
 
     def rayne_test_thing(self):
 
-        s0.go_until_press(s0_rotation_direction, 10000)
-        s1.go_until_press(s1_rotation_direction, 10000)
+        dpiStepper.setSpeedInStepsPerSecond(0, 10000)
+        dpiStepper.setSpeedInStepsPerSecond(1, 10000)
 
         # have a thread with a while True loop running this dpiStepper.moveToRelativePositionInSteps(Motor Number,  1 * steps_per_rotation, wait_to_finish_moving_flg)
 
@@ -121,7 +123,7 @@ class MainScreen(Screen):
         #update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
 
         print("slowing")
-        s0.go_until_press(s0_rotation_direction, 7600)
+        dpiStepper.setSpeedInStepsPerSecond(0, 76000)
         sleep(4.5)
 
 
@@ -130,8 +132,7 @@ class MainScreen(Screen):
         sleep(5)
         # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
 
-
-        s0.go_until_press(s0_rotation_direction, 10000)
+        dpiStepper.setSpeedInStepsPerSecond(0, 10000)
         self.current_spiral_position = 1
 
     def specific_control(self):
@@ -231,9 +232,9 @@ class MainScreen(Screen):
         #
         # now wait for both motors to stop
         #
-        while dpiStepper.getAllMotorsStopped() == False:
-            sleep(0.02)
-
+        for i in motors:
+            dpiStepper.decelerateToAStop(i)
+            
         stop_motors = True
 
     @staticmethod
