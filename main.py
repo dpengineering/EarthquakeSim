@@ -66,9 +66,11 @@ def stop_all():
     while dpiStepper.getAllMotorsStopped() == False:
         sleep(0.02)
 
+"""
 def moving_thread(MotorNumber):
     while not stop_motors:
-        dpiStepper.moveToRelativePositionInSteps(MotorNumber, 200, wait_to_finish_moving_flg)
+        dpiStepper.moveToRelativePositionInSteps(MotorNumber, 200, wait_to_finish_moving_flg=False)
+"""
 
 
 class MainScreen(Screen):
@@ -91,7 +93,7 @@ class MainScreen(Screen):
         stop_motors = False
 
         if dpiStepper.getAllMotorsStopped(self):
-            moving_thread(MotorNumber)
+            dpiStepper.moveToRelativePositionInSteps(MotorNumber, 200, wait_to_finish_moving_flg=False)
             print("moving!")
 
         else:
@@ -107,7 +109,7 @@ class MainScreen(Screen):
         if dpiStepper.getAllMotorsStopped(self):
             stop_motors = False
             for i in motors:
-                moving_thread(i)
+                dpiStepper.moveToRelativePositionInSteps(MotorNumber, 200, wait_to_finish_moving_flg=False)
 
 
 
@@ -211,10 +213,10 @@ class MainScreen(Screen):
         print("does the thing")
 
     def speed_change(self):
-        
+
         #gets slider value
         self.motor_0_speed = self.ids.speed_slider_1.value
-        
+
         #makes slider value motor speed if motor is not stopped
         if not dpiStepper.getAllMotorsStopped(self):
             # update speed with dpiStepper.setSpeedInStepsPerSecond(0, speed_steps_per_second)
