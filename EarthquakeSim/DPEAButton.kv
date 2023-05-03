@@ -1,0 +1,32 @@
+#    Written by Francis Pan as part of the standard kivy libraries for the DPEA
+#    28 February 2018
+#
+#    A Button with the default appearance.
+#    When using, specify:
+#        id, text, color, size, position, on_press, and on_release
+
+<DPEAButton>:
+    Button:
+        size_hint: None,None
+        background_color: 0, 0, 0, 0
+        background_normal: ''
+        canvas:
+            BorderImage:
+                border: 25, 25, 25, 25
+                source: self.parent.shadow_path
+                pos: self.parent.x, self.parent.y - 11
+                size: self.parent.width + 11, self.parent.height + 11
+            Color:
+                rgba: self.parent.color
+            RoundedRectangle:
+                pos: self.parent.pos
+                size: self.parent.size
+
+        Label:
+            text: self.parent.parent.text
+            font_size: self.parent.parent.height * 0.45
+            color: 1, 1, 1, 1
+            bold: True
+            outline_width: self.font_size * 0.1
+            outline_color: 0, 0, 0
+            center: self.parent.parent.center

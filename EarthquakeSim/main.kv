@@ -1,0 +1,72 @@
+<MainScreen>:
+    name: 'main'
+    FloatLayout:
+        size_hint: None, None
+
+    DPEAButton:
+        size: 60, 60
+        center_x: 30 + 20
+        center_y: root.height - 30 - 20
+        background_color: 0,0,0,0
+        color: 1, 0, 0, 1
+        text: "Exit"
+        on_press: root.exit()
+
+    Label:
+        font_size: 60
+        size_hint: None, None
+        center_x: root.width * 0.5
+        center_y: root.height - 50
+        text: "Amplitude"
+        color: 1, 1, 1, 1
+
+    Slider
+        size_hint: None, None
+        width: root.width - 40
+        background_width: 30
+        center_x: root.width * 0.5
+        center_y: root.height - 50 - 80
+        step: 1
+        min: 0
+        max: 100
+        orientation: "horizontal"
+
+    Label:
+        font_size: 60
+        size_hint: None, None
+        center_x: root.width * 0.5
+        center_y: root.height - 250
+        text: "Frequency"
+        color: 1, 1, 1, 1
+
+    Slider
+        size_hint: None, None
+        width: root.width - 40
+        center_x: root.width * 0.5
+        center_y: root.height - 250 - 80
+        step: 1
+        min: 0
+        max: 100
+        orientation: "horizontal"
+
+    DPEAButton:
+        size: 400, 200
+        center_x: 200 + 20
+        center_y: 120
+        background_color: 0,0,0,0
+        color: 1, 0, 0, 1
+        text: "Start"
+        on_press: root.start()
+
+
+    DPEAButton:
+        size: 400, 200
+        center_x: root.width - 200 - 20
+        center_y: 120
+        background_color: 0,0,0,0
+        color: 1, 0, 0, 1
+        text: "Disable"
+        on_press: root.stop()
+
+
+
