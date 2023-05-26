@@ -10,7 +10,7 @@ from kivy.app import App
 import os.path
 
 PASSWORD = '7266'
-USERPW = ''
+USERPW = '1234'
 
 passcode_screen_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "PassCodeScreen.kv")
 

@@ -9,14 +9,22 @@
         center_y: root.height - 30 - 20
         background_color: 0,0,0,0
         color: 1, 0, 0, 1
-        text: "Exit"
-        on_press: root.exit()
+        text: "Admin"
+        on_press: root.admin_action()
+
+    Label:
+        font_size: 20
+        size_hint: None, None
+        center_x: root.width * 0.5
+        center_y: root.height - 20
+        text: root.debugText
+        color: 1, 1, 1, 1
 
     Label:
         font_size: 60
         size_hint: None, None
         center_x: root.width * 0.5
-        center_y: root.height - 50
+        center_y: root.height - 130
         text: "Amplitude"
         color: 1, 1, 1, 1
 
@@ -25,17 +33,19 @@
         width: root.width - 40
         background_width: 30
         center_x: root.width * 0.5
-        center_y: root.height - 50 - 80
+        center_y: root.height - 130 - 80
         step: 1
         min: 0
         max: 100
         orientation: "horizontal"
+        on_value: root.amplitudeChange(self.value)
+        value: root.amplitudeValue
 
     Label:
         font_size: 60
         size_hint: None, None
         center_x: root.width * 0.5
-        center_y: root.height - 250
+        center_y: root.height - 380
         text: "Frequency"
         color: 1, 1, 1, 1
 
@@ -43,11 +53,13 @@
         size_hint: None, None
         width: root.width - 40
         center_x: root.width * 0.5
-        center_y: root.height - 250 - 80
+        center_y: root.height - 380 - 80
         step: 1
         min: 0
         max: 100
         orientation: "horizontal"
+        on_value: root.frequencyChange(self.value)
+        value: root.frequencyValue
 
     DPEAButton:
         size: 400, 200
@@ -56,6 +68,7 @@
         background_color: 0,0,0,0
         color: 1, 0, 0, 1
         text: "Start"
+        font_size: 40
         on_press: root.start()
 
 
@@ -66,6 +79,7 @@
         background_color: 0,0,0,0
         color: 1, 0, 0, 1
         text: "Disable"
+        font_size: 40
         on_press: root.stop()
 
 
