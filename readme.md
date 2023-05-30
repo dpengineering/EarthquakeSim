@@ -7,10 +7,10 @@ Welcome future software person 🫡 Your about to have the time of your life del
 
     Note: I strive to build a clean perfect project, but at some point you gotta kill the puppies 🔪 🐶 and live with imperfections, keep that in mind
 
-# Table of Contents**
+## Table of Contents
 
 - [Earthquake Simulator Programming/Mechanics Guide](#earthquake-simulator-programmingmechanics-guide)
-- [Table of Contents\*\*](#table-of-contents)
+  - [Table of Contents](#table-of-contents)
   - [Concept](#concept)
   - [Mechanics](#mechanics)
     - [Motion](#motion)
