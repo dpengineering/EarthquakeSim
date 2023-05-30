@@ -30,7 +30,6 @@ Welcome future software person 🫡 Your about to have the time of your life del
 
 💭 Our goal for this project was to allow participants to build structures and then simulate real past earthquakes, and see if they would stand. To accomplish this, we went through a series of designs and arrived on the disk-based `Oscillator` design that could adjust both `Frequency` and `Amplitude` of shakiness.  
 
-
 `Frequency` = Speed  
 `Amplitude` = Distance moving
 
@@ -137,11 +136,11 @@ During both `Frequency` and `Amplitude` changes, the value, but not direction of
     Note: I hate kivy. As someone who is experienced in HTML/CSS/JavaScript UI design, Kivy is painful to work with, especially the sliders
 ---
 
-## Earthquake Simulation 
+## Earthquake Simulation  
 
 🗺 The simulating of real world earthquakes is up to **YOU**. However, I did some initial R&D within the `dataProcessing.ipynb` Jupyter Notebook.
 
-Using the python library [obspy](https://docs.obspy.org/), we can pull real earthquake data and explore events, stations, and waveforms. 
+Using the python library [obspy](https://docs.obspy.org/), we can pull real earthquake data and explore events, stations, and waveforms.  
 
 ### My Thoughts
 
