@@ -1,7 +1,7 @@
 
 # Earthquake Simulator Programming/Mechanics Guide
 
-*By Gabriel Casselman* 🤓
+*By Gabriel Casselman* 🤓 [Contact 💌](https://2023mechatronicsgabrielcasselman.weebly.com/contact.html)  
 
 Welcome future software person 🫡 Your about to have the time of your life delving into the code of this project. This guide is intended to familiarize you with the structure of the code, and the mechanics of the project from a programming perspective. 🥶
 
@@ -138,7 +138,7 @@ During both `Frequency` and `Amplitude` changes, the value, but not direction of
 
 ## Earthquake Simulation  
 
-🗺 The simulating of real world earthquakes is up to **YOU**. However, I did some initial R&D within the `dataProcessing.ipynb` Jupyter Notebook.
+🌏 The simulating of real world earthquakes is up to **YOU**. However, I did some initial R&D within the `dataProcessing.ipynb` Jupyter Notebook.
 
 Using the python library [obspy](https://docs.obspy.org/), we can pull real earthquake data and explore events, stations, and waveforms.  
 
@@ -157,4 +157,10 @@ Using the python library [obspy](https://docs.obspy.org/), we can pull real eart
 - By updated exactly every revolution, the shaking will be the mostly accurate to the waveform
 - Homing has to happen first, and after homing initial adjustments to diff might be necessary before the first sample
 - The UI will obviously need be changed to select certain earthquakes
-- The units of the data is unscaled, and will need to be mapped from its unknown units to units in steps.
+- The units of the data is unscaled, and will need to be mapped from its unknown units to units in steps.  
+
+---
+
+Thanks for reading!
+
+    Note: Shout-out Markdown creators for adding emoji support 🌽🚊🕔🎶
