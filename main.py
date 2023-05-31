@@ -61,8 +61,8 @@ class MainScreen(Screen):
 
     # Init properties referenced in Kivi UI for debug text
     debugText = StringProperty()
-    amplitudeValue = NumericProperty()
-    frequencyValue = NumericProperty()
+    amplitudeValue = 0
+    frequencyValue = 0
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -75,9 +75,11 @@ class MainScreen(Screen):
 
     # On slider changes, call Oscillator instance functions, pass in new values
     def frequencyChange(self, value):
+        self.frequencyValue = value
         self.HorizontalAxis.frequencyChange(value)
 
     def amplitudeChange(self, value):
+        self.amplitudeValue = value
         self.HorizontalAxis.amplitudeChange(value)
 
     # On button presses, call Oscillator instance functions as well
@@ -85,11 +87,12 @@ class MainScreen(Screen):
         self.HorizontalAxis.stop()
 
     def start(self):
-        # use references to set intial slider values
-        self.amplitudeValue = 10
-        self.frequencyValue = 10
-        # pass log funciton into start method for debug text during operation
-        self.HorizontalAxis.start(self.log)
+        # pass log function into start method for debug text during operation
+        if self.amplitudeValue == 0 and self.frequencyValue == 0:
+            self.HorizontalAxis.start(self.log)
+            return
+        else:
+            self.log("Please Reset Sliders")
     
     # Screen changes
     def main_screen(self):

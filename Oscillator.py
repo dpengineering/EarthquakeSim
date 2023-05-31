@@ -118,8 +118,8 @@ class Oscillator:
         self.home()
 
         # Set default values
-        self.frequencyChange(10)
-        self.amplitudeChange(10)
+        self.frequencyChange(0)
+        self.amplitudeChange(0)
 
         # Run motors
         self.dpiStepper.moveToRelativePositionInSteps(0, -10000000, False)
@@ -153,8 +153,8 @@ class Oscillator:
         Changes amplitude of oscillator
         Takes slider value, maps it, updates target difference and offset
         """
-        # Map slider value (0 - 100) to 100 - 3300 STEP OFFSET
-        self.targetDiff = ((value / 100) * 3200) + 100
+        # Map slider value (0 - 100) to 100 - 1700 STEP OFFSET
+        self.targetDiff = ((1 - (value / 100)) * 1600) + 100
         success, diff = self.getDiff()
         
         if not success:
@@ -221,10 +221,10 @@ class Oscillator:
 
             # Account for minor offset plus 180 degree rotation
             # This should only be used when assembled accordingly
-            self.dpiStepper.setSpeedInStepsPerSecond(0, 1600)
-            self.dpiStepper.setSpeedInStepsPerSecond(1, 1600)
-            self.dpiStepper.moveToRelativePositionInSteps(0, -(self.LINEAR_OFFSET + 1600), False)
-            self.dpiStepper.moveToRelativePositionInSteps(1, (self.LINEAR_OFFSET + 1600), False)
+            # self.dpiStepper.setSpeedInStepsPerSecond(0, 1600)
+            # self.dpiStepper.setSpeedInStepsPerSecond(1, 1600)
+            # self.dpiStepper.moveToRelativePositionInSteps(0, -(self.LINEAR_OFFSET + 1600), False)
+            # self.dpiStepper.moveToRelativePositionInSteps(1, (self.LINEAR_OFFSET + 1600), False)
 
             # wait for everything to finish
             while not self.dpiStepper.getAllMotorsStopped():
