@@ -18,6 +18,11 @@ class Oscillator:
         self.targetSpeed = 0
         self.offset = 0
 
+        self.homingText = False
+        self.doorsText = False
+        self.running = False
+
+
         # initialize, check for errors
         if not self.dpiStepper.initialize():
             print("Communication with the DPiStepper board failed.")
@@ -39,8 +44,9 @@ class Oscillator:
         Abort all motion, by stopping loop (only if loop has previously been created) 
         and stopping motors
         """
+        self.running = False
         if hasattr(self, "interval"):
-            self.interval.cancel()
+            Clock.unschedule(self.interval)
 
         self.dpiStepper.emergencyStop(0)
         self.dpiStepper.emergencyStop(1)
@@ -52,7 +58,7 @@ class Oscillator:
     def getDiff(self):
         """
         Calculates the difference between the two motor positions 
-        by subracting the running total of steps (given by dpiStepper) of each motor 
+        by subtracting the running total of steps (given by dpiStepper) of each motor 
         Used to determine current position of offset shaft
         :return: success, difference (STEPS)
         """
@@ -79,41 +85,51 @@ class Oscillator:
 
     def loop(self, log):
         """
-        The loop is called periodically and is responible for updating the system:
+        The loop is called periodically and is responsible for updating the system:
         1. The correct frequency (aka speed)
         2. The correct amplitude (aka difference/diff)
-        3. Make sure the doors havn't opened
+        3. Make sure the doors haven't opened
         Passed in is a log function used for debugging
         """
-        if not self.getDoors():
-            self.stop()
-
-        success, diff = self.getDiff()
-        if not success:
-            return
-
-        # If difference is within threshold, reset the speed offset
-        # See ReadMe for more details
-        if abs(self.targetDiff - diff) < 50:
-            self.offset = 0
-
-        self.dpiStepper.setSpeedInStepsPerSecond(1, self.targetSpeed)
-        self.dpiStepper.setSpeedInStepsPerSecond(0, self.targetSpeed + self.offset)
         
-        # Logging used for debugging
-        doors = self.getDoors()
-        log("Diff: " + str(diff) + " Target: " + str(self.targetDiff) + " Offset: " + str(self.offset) + " Doors: " + str(doors))
+        if self.doorsText:
+            log("Door Open!")
+        elif self.homingText:
+            log("Homing")
+        elif self.running:
+            if not self.getDoors():
+                self.stop()
+
+            success, diff = self.getDiff()
+            if not success:
+                return
+
+            # If difference is within threshold, reset the speed offset
+            # See ReadMe for more details
+            if abs(self.targetDiff - diff) < 50:
+                self.offset = 0
+
+            self.dpiStepper.setSpeedInStepsPerSecond(1, self.targetSpeed)
+            self.dpiStepper.setSpeedInStepsPerSecond(0, self.targetSpeed + self.offset)
+            
+            # Logging used for debugging
+            doors = self.getDoors()
+
+            log("Diff: " + str(diff) + " Target: " + str(self.targetDiff) + " Offset: " + str(self.offset) + " Doors: " + str(doors))
 
     def start(self, log):
         """
         Responsible for homing axis, setting default values, running motors, and starting loop, checks if doors a closed first
         Passed in a log function used for debugging
         """
+         # Start loop
+        Clock.schedule_interval(lambda dt: self.loop(log), 0.01)
+
         if not self.getDoors():
-            log("Doors Open!!")
+            self.doorsText = True
             return
         else:
-            log("Homing")
+            self.doorsText = False
 
         self.home()
 
@@ -125,8 +141,8 @@ class Oscillator:
         self.dpiStepper.moveToRelativePositionInSteps(0, -10000000, False)
         self.dpiStepper.moveToRelativePositionInSteps(1, 10000000, False)
 
-        # Start loop
-        self.interval = Clock.schedule_interval(lambda dt: self.loop(log), 0.01)
+        # Run operation loop
+        self.running = True
 
 
     def frequencyChange(self, value):
@@ -139,7 +155,7 @@ class Oscillator:
         RPM = ((value / 100) * 450) + 15
         self.targetSpeed = (RPM / 60) * 200 * 16
 
-        # Recacluate offset, as it based on speed ie. when speed changes offset should change too
+        # Recalculate offset, as it based on speed ie. when speed changes offset should change too
         # See readme for more details
         if self.offset == 0:
             return
@@ -153,8 +169,8 @@ class Oscillator:
         Changes amplitude of oscillator
         Takes slider value, maps it, updates target difference and offset
         """
-        # Map slider value (0 - 100) to 100 - 1700 STEP OFFSET
-        self.targetDiff = ((1 - (value / 100)) * 1600) + 100
+        # Map slider value (0 - 100) to 100 - 2600 STEP OFFSET
+        self.targetDiff = ((1 - (value / 100)) * 2500) + 100
         success, diff = self.getDiff()
         
         if not success:
@@ -186,6 +202,7 @@ class Oscillator:
         Homing routine, sets oscillator to starting position
         See ReadMe for more details
         """
+        self.homingText = True
         self.dpiStepper.enableMotors(True)
 
         # set to moderate speed for homing
@@ -225,10 +242,8 @@ class Oscillator:
             # self.dpiStepper.setSpeedInStepsPerSecond(1, 1600)
             # self.dpiStepper.moveToRelativePositionInSteps(0, -(self.LINEAR_OFFSET + 1600), False)
             # self.dpiStepper.moveToRelativePositionInSteps(1, (self.LINEAR_OFFSET + 1600), False)
-
-            # wait for everything to finish
-            while not self.dpiStepper.getAllMotorsStopped():
-                 sleep(.1)
+            # while not self.dpiStepper.getAllMotorsStopped():
+            #      sleep(.1)
 
         # homing spiral motor
         results, __, __, homeAtHomeSwitchFlg = self.dpiStepper.getStepperStatus(0)
@@ -257,3 +272,5 @@ class Oscillator:
         # finally set home for each motor
         self.dpiStepper.setCurrentPositionInSteps(1, 0)
         self.dpiStepper.setCurrentPositionInSteps(0, 0)
+
+        self.homingText = False
