@@ -1,6 +1,6 @@
 import os
 
-# os.environ['DISPLAY'] = ":0.0"
+os.environ['DISPLAY'] = ":0.0"
 # os.environ['KIVY_WINDOW'] = 'egl_rpi'
 
 from kivy.app import App
@@ -66,9 +66,9 @@ class MainScreen(Screen):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.debugText = "debug"
+        self.debugText = "Door Closed!"
 
-    # Provide a function for setting the debug test
+    # Provide a function for setting the debug text
     # Later passed down into oscillator instance for logging from there
     def log(self, text):
         self.debugText = text
