@@ -4,27 +4,35 @@
 #    A Button with the default appearance.
 #    When using, specify:
 #        id, text, color, size, position, on_press, and on_release
+#
+#    Modified by Alex Ortiz to simplify structure and replace border image with rectangle shadow
+#    14 November 2024
 
 <DPEAButton>:
-    Button:
-        size_hint: None,None
-        background_color: 0, 0, 0, 0
-        background_normal: ''
-        canvas:
-            BorderImage:
-                border: 25, 25, 25, 25
-                source: self.parent.shadow_path
-                pos: self.parent.x, self.parent.y - 11
-                size: self.parent.width + 11, self.parent.height + 11
-            Color:
-                rgba: self.parent.color
-            RoundedRectangle:
-                pos: self.parent.pos
-                size: self.parent.size
+       size_hint: None,None
+       background_color: 0, 0, 0, 0
+       background_normal: ''
 
-        Label:
-            text: self.parent.parent.text
-            font_size: self.parent.parent.height * 0.45
-            color: 1, 1, 1, 1
-            bold: True
-            center: self.parent.parent.center
+       canvas.after:
+           #Shadow border
+           Color:
+               rgba: 0, 0, 0, 0.3 # Shadow color + transparency
+           RoundedRectangle:
+               pos: self.x - 5, self.y - 5 # Offset shadow position
+               size: self.width + 10, self.height + 10
+               radius: [25]
+
+       canvas.before:
+           # Main button
+           Color:
+               rgba: self.color
+           RoundedRectangle:
+               pos: self.pos
+               size: self.size
+
+       Label:
+           text: root.text
+           font_size: root.height * 0.45
+           color: 1, 1, 1, 1
+           bold: True
+           center: root.center

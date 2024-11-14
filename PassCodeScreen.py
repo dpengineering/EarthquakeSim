@@ -70,7 +70,7 @@ class PassCodeScreen(Screen):
 
     def transition_back(self):
         """
-        Transition back to given transition back scren
+        Transition back to given transition back screen
         :return: None
         """
         global USERPW
