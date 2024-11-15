@@ -8,7 +8,7 @@
         center_x: 30 + 20
         center_y: root.height - 30 - 20
         background_color: 0,0,0,0
-        color: 1, 1, 1, 1
+        color: 1, 0.980, 0.902, 1
         text: "Admin"
         on_press: root.admin_action()
 
@@ -26,17 +26,19 @@
         center_x: root.width * 0.5
         center_y: root.height - 130
         text: "Amplitude"
-        color: 1, 1, 1, 1
+        color: 1, 0.980, 0.902, 1
 
     Slider
         size_hint: None, None
         width: root.width - 40
-        background_width: 30
+        background_width: 20
         center_x: root.width * 0.5
         center_y: root.height - 130 - 80
         step: 1
         min: 0
         max: 100
+        value_track: True
+        value_track_color: 0.004, 0.451, 0.506, 1
         orientation: "horizontal"
         on_value: root.amplitudeChange(self.value)
 
@@ -46,16 +48,19 @@
         center_x: root.width * 0.5
         center_y: root.height - 380
         text: "Frequency"
-        color: 1, 1, 1, 1
+        color: 1, 0.980, 0.902, 1
 
     Slider
         size_hint: None, None
         width: root.width - 40
+        background_width: 20
         center_x: root.width * 0.5
         center_y: root.height - 380 - 80
         step: 1
         min: 0
         max: 100
+        value_track: True
+        value_track_color: 0.004, 0.451, 0.506, 1
         orientation: "horizontal"
         on_value: root.frequencyChange(self.value)
 
@@ -64,7 +69,7 @@
         center_x: 200 + 20
         center_y: 120
         background_color: 0,0,0,0
-        color: 1, 0, 0, 1
+        color: 0.545, 0, 0, 1
         text: "Start"
         font_size: 40
         on_press: root.start()
@@ -75,10 +80,7 @@
         center_x: root.width - 200 - 20
         center_y: 120
         background_color: 0,0,0,0
-        color: 1, 0, 0, 1
+        color: 0.545, 0, 0, 1
         text: "Disable"
         font_size: 40
         on_press: root.stop()
-
-
-
