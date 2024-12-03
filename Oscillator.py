@@ -1,17 +1,12 @@
-from dpeaDPi.DPiStepper import DPiStepper
 from time import sleep
 from kivy.clock import Clock
 
 class Oscillator:
-    def __init__(self, board_num, dpiComputer):
+    def __init__(self, dpiStepper, dpiComputer, microstepping, accel, speed):
         # Global vars
         self.LINEAR_OFFSET = 100
-
         self.dpiComputer = dpiComputer
-
-        # set up DPiStepper
-        self.dpiStepper = DPiStepper()
-        self.dpiStepper.setBoardNumber(board_num)
+        self.dpiStepper = dpiStepper
 
         # motor targets (speed in steps/sec and diff in steps)
         self.targetDiff = 0
@@ -22,22 +17,20 @@ class Oscillator:
         self.doorsText = False
         self.running = False
 
-
         # initialize, check for errors
         if not self.dpiStepper.initialize():
             print("Communication with the DPiStepper board failed.")
 
         # set micro stepping as set on drivers
-        self.dpiStepper.setMicrostepping(16)
+        self.dpiStepper.setMicrostepping(microstepping)
 
         # set acceleration 
-        self.dpiStepper.setAccelerationInStepsPerSecondPerSecond(0, 20000)
-        self.dpiStepper.setAccelerationInStepsPerSecondPerSecond(1, 20000)
+        self.dpiStepper.setAccelerationInStepsPerSecondPerSecond(0, accel * microstepping)
+        self.dpiStepper.setAccelerationInStepsPerSecondPerSecond(1, accel * microstepping)
 
         # set default speed
-        self.dpiStepper.setSpeedInStepsPerSecond(0, 2560)
-        self.dpiStepper.setSpeedInStepsPerSecond(1, 2560)
-
+        self.dpiStepper.setSpeedInStepsPerSecond(0, speed * microstepping)
+        self.dpiStepper.setSpeedInStepsPerSecond(1, speed * microstepping)
 
     def stop(self):
         """

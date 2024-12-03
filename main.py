@@ -19,6 +19,7 @@ from pidev.kivy.selfupdatinglabel import SelfUpdatingLabel
 from datetime import datetime
 time = datetime
 
+from dpeaDPi.DPiStepper import DPiStepper
 from dpeaDPi.DPiComputer import DPiComputer
 from Oscillator import Oscillator
 
@@ -47,6 +48,14 @@ Window.clearcolor = (0.2, 0.2, 0.2, 1)
 dpiComputer = DPiComputer()
 dpiComputer.initialize()
 
+# set up horizontal DPiStepper
+horizontalStepper = DPiStepper()
+horizontalStepper.setBoardNumber(1)
+
+# set up vertical DPiStepper
+verticalStepper = DPiStepper()
+verticalStepper.setBoardNumber(0)
+
 """
 Main Screen 
 """
@@ -56,7 +65,10 @@ class MainScreen(Screen):
     Class to handle the main screen and its associated touch events
     """
     # Create instance of Oscillator class using DPIStepper board 1, passes dpiComputer for sensor reading
-    HorizontalAxis = Oscillator(1, dpiComputer)
+    HorizontalAxis = Oscillator(horizontalStepper, dpiComputer, 16,1250, 160)
+
+    # Create instance of Oscillator class using DPIStepper board 0, passes dpiComputer for sensor reading
+    VerticalAxis = Oscillator(verticalStepper, dpiComputer, 16, 312, 40) #temp values
 
     # Init properties referenced in Kivi UI for debug text
     debugText = StringProperty()
@@ -182,4 +194,19 @@ def send_event(event_name):
 if __name__ == "__main__":
     # send_event("Project Initialized")
     # Window.fullscreen = 'auto'
-    EarthquakeSimGUI().run()
+    try:
+        EarthquakeSimGUI().run()
+    finally:
+        horizontalStepper.emergencyStop(0)
+        horizontalStepper.emergencyStop(1)
+
+        verticalStepper.emergencyStop(0)
+        verticalStepper.emergencyStop(1)
+
+        if horizontalStepper.getAllMotorsStopped():
+            horizontalStepper.enableMotors(False)
+
+        if verticalStepper.getAllMotorsStopped():
+            verticalStepper.enableMotors(False)
+
+        print("Motors off")
