@@ -120,7 +120,7 @@ class Oscillator:
 
         if not self.getDoors():
             self.doorsText = True
-            return
+            #return
         else:
             self.doorsText = False
 
@@ -131,8 +131,8 @@ class Oscillator:
         self.amplitudeChange(0)
 
         # Run motors
-        self.dpiStepper.moveToRelativePositionInSteps(0, -10000000, False)
-        self.dpiStepper.moveToRelativePositionInSteps(1, 10000000, False)
+        # self.dpiStepper.moveToRelativePositionInSteps(0, -10000000, False)
+        # self.dpiStepper.moveToRelativePositionInSteps(1, 10000000, False)
 
         # Run operation loop
         self.running = True
@@ -198,72 +198,64 @@ class Oscillator:
         self.homingText = True
         self.dpiStepper.enableMotors(True)
 
-        # set to moderate speed for homing
-        self.dpiStepper.setSpeedInStepsPerSecond(1, 1600)
-        self.dpiStepper.setSpeedInStepsPerSecond(0, 1600)
-
-        results, stoppedFlg, __, homeAtHomeSwitchFlg = self.dpiStepper.getStepperStatus(1)
-        if not results:
-             return
-
-        # make sure were not already home
-        if not homeAtHomeSwitchFlg:
-
-            # move motors together to avoid collision
-            self.dpiStepper.moveToRelativePositionInSteps(0, -4000, False)
-            self.dpiStepper.moveToRelativePositionInSteps(1, 4000, False)
-
-            self.stopAtHome(1)
-
-            # move away from sensor
-            self.dpiStepper.moveToRelativePositionInSteps(0, 4000, False)
-            self.dpiStepper.moveToRelativePositionInSteps(1, -4000, False)
-
-            self.stopAtHome(1)
-
-            # move back, but slow
-            self.dpiStepper.setSpeedInStepsPerSecond(0, 200)
-            self.dpiStepper.setSpeedInStepsPerSecond(1, 200)
-            self.dpiStepper.moveToRelativePositionInSteps(0, -4000, False)
-            self.dpiStepper.moveToRelativePositionInSteps(1, 4000, False)
-
-            self.stopAtHome(1)
-
-            # Account for minor offset plus 180 degree rotation
-            # This should only be used when assembled accordingly
-            # self.dpiStepper.setSpeedInStepsPerSecond(0, 1600)
-            # self.dpiStepper.setSpeedInStepsPerSecond(1, 1600)
-            # self.dpiStepper.moveToRelativePositionInSteps(0, -(self.LINEAR_OFFSET + 1600), False)
-            # self.dpiStepper.moveToRelativePositionInSteps(1, (self.LINEAR_OFFSET + 1600), False)
-            # while not self.dpiStepper.getAllMotorsStopped():
-            #      sleep(.1)
-
         # homing spiral motor
-        results, __, __, homeAtHomeSwitchFlg = self.dpiStepper.getStepperStatus(0)
-        if not results:
-            return
-        
-        self.dpiStepper.setSpeedInStepsPerSecond(0, 3200)
+        self.homeStepper(0, 3200)
 
-        # make sure were not already home
-        if not homeAtHomeSwitchFlg:
-            self.dpiStepper.moveToRelativePositionInSteps(0, -4000, False)
-
-            self.stopAtHome(0)
-
-            # move away from sensor
-            self.dpiStepper.moveToRelativePositionInSteps(0, 4000, False)
-
-            self.stopAtHome(0)
-
-            # move back, but slow
-            self.dpiStepper.setSpeedInStepsPerSecond(0, 200)
-            self.dpiStepper.moveToRelativePositionInSteps(0, -4000, False)
-
-            self.stopAtHome(0)
+        # home other stepper motor, moving together to avoid collision
+        self.homeStepper(1, 1600)
 
         # finally set home for each motor
         self.dpiStepper.setCurrentPositionInSteps(1, 0)
         self.dpiStepper.setCurrentPositionInSteps(0, 0)
 
+        # Account for minor offset plus 180 degree rotation
+        # This should only be used when assembled accordingly
+        # self.dpiStepper.setSpeedInStepsPerSecond(0, 1600)
+        # self.dpiStepper.setSpeedInStepsPerSecond(1, 1600)
+        # self.dpiStepper.moveToRelativePositionInSteps(0, -(self.LINEAR_OFFSET + 1600), False)
+        # self.dpiStepper.moveToRelativePositionInSteps(1, (self.LINEAR_OFFSET + 1600), False)
+        # while not self.dpiStepper.getAllMotorsStopped():
+        #      sleep(.1)
+
         self.homingText = False
+
+    def homeStepper(self, stepper_num, speed):
+        """
+        Skeleton logic for homing
+        """
+
+        # set motor speed
+        self.dpiStepper.setSpeedInStepsPerSecond(stepper_num, speed)
+        if stepper_num == 1:
+            self.dpiStepper.setSpeedInStepsPerSecond(0, speed)
+
+        results, __, __, homeAtHomeSwitchFlg = self.dpiStepper.getStepperStatus(stepper_num)
+        if not results:
+            return
+
+        # make sure we're not already home
+        if not homeAtHomeSwitchFlg:
+
+            # move towards sensor
+            self.dpiStepper.moveToRelativePositionInSteps(stepper_num, -4000, False)
+            if stepper_num == 1:
+                self.dpiStepper.moveToRelativePositionInSteps(0, -4000, False)
+
+            self.stopAtHome(stepper_num)
+
+            # move away from sensor
+            self.dpiStepper.moveToRelativePositionInSteps(stepper_num, 4000, False)
+            if stepper_num == 1:
+                self.dpiStepper.moveToRelativePositionInSteps(0, 4000, False)
+
+            self.stopAtHome(stepper_num)
+
+            # move back, but slow
+            self.dpiStepper.setSpeedInStepsPerSecond(stepper_num, 200)
+            if stepper_num == 1:
+                self.dpiStepper.setSpeedInStepsPerSecond(0, 200)
+            self.dpiStepper.moveToRelativePositionInSteps(stepper_num, -4000, False)
+            if stepper_num == 1:
+                self.dpiStepper.moveToRelativePositionInSteps(0, -4000, False)
+
+            self.stopAtHome(stepper_num)

@@ -208,5 +208,3 @@ if __name__ == "__main__":
 
         if verticalStepper.getAllMotorsStopped():
             verticalStepper.enableMotors(False)
-
-        print("Motors off")
