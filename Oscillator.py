@@ -13,8 +13,7 @@ class Oscillator:
         self.targetSpeed = 0
         self.offset = 0
 
-        self.homingText = False
-        self.doorsText = False
+        self.homing = False
         self.running = False
 
         # initialize, check for errors
@@ -76,23 +75,21 @@ class Oscillator:
 
         return (not doorLeft) and (not doorRight)
 
-    def loop(self, log):
+    def loop(self):
         """
         The loop is called periodically and is responsible for updating the system:
         1. The correct frequency (aka speed)
         2. The correct amplitude (aka difference/diff)
         3. Make sure the doors haven't opened
-        Passed in is a log function used for debugging
         """
-        
-        if self.doorsText:
-            log("Door Open!")
-        elif self.homingText:
-            log("Homing")
-        elif self.running:
-            if not self.getDoors():
-                self.stop()
 
+        if not self.getDoors():
+            print("Doors open!")
+            self.stop()
+        elif self.homing:
+            print("Homing")
+            return
+        elif self.running:
             success, diff = self.getDiff()
             if not success:
                 return
@@ -108,21 +105,14 @@ class Oscillator:
             # Logging used for debugging
             doors = self.getDoors()
 
-            log("Diff: " + str(diff) + " Target: " + str(self.targetDiff) + " Offset: " + str(self.offset) + " Doors: " + str(doors))
+            print("Diff: " + str(diff) + " Target: " + str(self.targetDiff) + " Offset: " + str(self.offset) + " Doors: " + str(doors))
 
-    def start(self, log):
+    def start(self):
         """
         Responsible for homing axis, setting default values, running motors, and starting loop, checks if doors a closed first
-        Passed in a log function used for debugging
         """
          # Start loop
-        Clock.schedule_interval(lambda dt: self.loop(log), 0.01)
-
-        if not self.getDoors():
-            self.doorsText = True
-            #return
-        else:
-            self.doorsText = False
+        Clock.schedule_interval(lambda dt: self.loop(), 0.01)
 
         self.home()
 
@@ -195,7 +185,7 @@ class Oscillator:
         Homing routine, sets oscillator to starting position
         See ReadMe for more details
         """
-        self.homingText = True
+        self.homing = True
         #self.dpiStepper.enableMotors(True)
 
         # homing motor, moving together to avoid collision
@@ -219,7 +209,7 @@ class Oscillator:
         # while not self.dpiStepper.getAllMotorsStopped():
         #      sleep(.1)
 
-        self.homingText = False
+        self.homing = False
 
     def homeStepper(self, stepper_num, direction, speed): #TODO finish debugging
         """

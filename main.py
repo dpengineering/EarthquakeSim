@@ -98,12 +98,9 @@ class MainScreen(Screen):
         self.HorizontalAxis.stop()
 
     def start(self):
-        # pass log function into start method for debug text during operation
         if self.amplitudeValue == 0 and self.frequencyValue == 0:
-            self.HorizontalAxis.start(self.log)
+            self.HorizontalAxis.start()
             return
-        else:
-            self.log("Please Reset Sliders")
     
     # Screen changes
     def main_screen(self):
