@@ -57,13 +57,13 @@ class Oscillator:
         """
         success, positionLinear = self.dpiStepper.getCurrentPositionInSteps(1)
         if not success:
-            return (False, 0)
+            return False, 0
         
         success, positionSpiral = self.dpiStepper.getCurrentPositionInSteps(0)
         if not success:
-            return (False, 0)
+            return False, 0
         
-        return (True, positionLinear + positionSpiral)
+        return True, positionLinear + positionSpiral
 
     def getDoors(self): 
         """
@@ -148,7 +148,7 @@ class Oscillator:
         RPM = ((value / 100) * 450) + 15
         self.targetSpeed = (RPM / 60) * 200 * 16
 
-        # Recalculate offset, as it based on speed ie. when speed changes offset should change too
+        # Recalculate offset, as it based on speed i.e. when speed changes offset should change too
         # See readme for more details
         if self.offset == 0:
             return
@@ -196,19 +196,21 @@ class Oscillator:
         See ReadMe for more details
         """
         self.homingText = True
-        self.dpiStepper.enableMotors(True)
+        #self.dpiStepper.enableMotors(True)
 
-        # homing spiral motor
-        self.homeStepper(0, 3200)
+        # homing motor, moving together to avoid collision
+        self.homeStepper(0, 1,3200)
+        sleep(5)
 
-        # home other stepper motor, moving together to avoid collision
-        self.homeStepper(1, 1600)
+        # home spiral motor
+        self.homeStepper(0, -1,1600)
+        sleep(5)
 
         # finally set home for each motor
         self.dpiStepper.setCurrentPositionInSteps(1, 0)
         self.dpiStepper.setCurrentPositionInSteps(0, 0)
 
-        # Account for minor offset plus 180 degree rotation
+        # Account for minor offset plus 180-degree rotation
         # This should only be used when assembled accordingly
         # self.dpiStepper.setSpeedInStepsPerSecond(0, 1600)
         # self.dpiStepper.setSpeedInStepsPerSecond(1, 1600)
@@ -219,15 +221,11 @@ class Oscillator:
 
         self.homingText = False
 
-    def homeStepper(self, stepper_num, speed):
+    def homeStepper(self, stepper_num, direction, speed): #TODO finish debugging
         """
         Skeleton logic for homing
         """
-
-        # set motor speed
         self.dpiStepper.setSpeedInStepsPerSecond(stepper_num, speed)
-        if stepper_num == 1:
-            self.dpiStepper.setSpeedInStepsPerSecond(0, speed)
 
         results, __, __, homeAtHomeSwitchFlg = self.dpiStepper.getStepperStatus(stepper_num)
         if not results:
@@ -237,25 +235,14 @@ class Oscillator:
         if not homeAtHomeSwitchFlg:
 
             # move towards sensor
-            self.dpiStepper.moveToRelativePositionInSteps(stepper_num, -4000, False)
-            if stepper_num == 1:
-                self.dpiStepper.moveToRelativePositionInSteps(0, -4000, False)
-
+            self.dpiStepper.moveToRelativePositionInSteps(stepper_num, direction * 4000, False)
             self.stopAtHome(stepper_num)
 
             # move away from sensor
-            self.dpiStepper.moveToRelativePositionInSteps(stepper_num, 4000, False)
-            if stepper_num == 1:
-                self.dpiStepper.moveToRelativePositionInSteps(0, 4000, False)
-
+            self.dpiStepper.moveToRelativePositionInSteps(stepper_num, direction * -4000, False)
             self.stopAtHome(stepper_num)
 
             # move back, but slow
             self.dpiStepper.setSpeedInStepsPerSecond(stepper_num, 200)
-            if stepper_num == 1:
-                self.dpiStepper.setSpeedInStepsPerSecond(0, 200)
-            self.dpiStepper.moveToRelativePositionInSteps(stepper_num, -4000, False)
-            if stepper_num == 1:
-                self.dpiStepper.moveToRelativePositionInSteps(0, -4000, False)
-
+            self.dpiStepper.moveToRelativePositionInSteps(stepper_num, direction * 4000, False)
             self.stopAtHome(stepper_num)
