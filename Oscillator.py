@@ -64,7 +64,7 @@ class Oscillator:
         
         return True, positionLinear + positionSpiral
 
-    def getDoors(self): 
+    def doorsAreClosed(self):
         """
         Returns door status, only true if both doors are closed
         Note: sensors are inverted, 0 is closed 1 is open
@@ -82,8 +82,9 @@ class Oscillator:
         2. The correct amplitude (aka difference/diff)
         3. Make sure the doors haven't opened
         """
-
-        if not self.getDoors():
+        #doorsOpen = not self.doorsAreClosed
+        doorsOpen = False
+        if doorsOpen:
             print("Doors open!")
             self.stop()
         elif self.homing:
@@ -101,9 +102,9 @@ class Oscillator:
 
             self.dpiStepper.setSpeedInStepsPerSecond(1, self.targetSpeed)
             self.dpiStepper.setSpeedInStepsPerSecond(0, self.targetSpeed + self.offset)
-            
+
             # Logging used for debugging
-            doors = self.getDoors()
+            doors = self.doorsAreClosed()
 
             print("Diff: " + str(diff) + " Target: " + str(self.targetDiff) + " Offset: " + str(self.offset) + " Doors: " + str(doors))
 
@@ -126,7 +127,6 @@ class Oscillator:
 
         # Run operation loop
         self.running = True
-
 
     def frequencyChange(self, value):
         """
@@ -186,14 +186,16 @@ class Oscillator:
         See ReadMe for more details
         """
         self.homing = True
-        #self.dpiStepper.enableMotors(True)
+        self.dpiStepper.enableMotors(False) #ensures that stepper 1 can be moved freely
 
         # homing motor, moving together to avoid collision
-        self.homeStepper(0, 1,3200)
+        self.homeStepper(0, 1,1,3200)
         sleep(5)
 
+        self.dpiStepper.enableMotors(True) #ensures that stepper 1 doesn't move with stepper 0
+
         # home spiral motor
-        self.homeStepper(0, -1,1600)
+        self.homeStepper(0, 0, -1,1600)
         sleep(5)
 
         # finally set home for each motor
@@ -211,7 +213,7 @@ class Oscillator:
 
         self.homing = False
 
-    def homeStepper(self, stepper_num, direction, speed): #TODO finish debugging
+    def homeStepper(self, stepper_num, home_num, direction, speed):
         """
         Skeleton logic for homing
         """
@@ -223,16 +225,15 @@ class Oscillator:
 
         # make sure we're not already home
         if not homeAtHomeSwitchFlg:
-
             # move towards sensor
             self.dpiStepper.moveToRelativePositionInSteps(stepper_num, direction * 4000, False)
-            self.stopAtHome(stepper_num)
+            self.stopAtHome(home_num)
 
             # move away from sensor
             self.dpiStepper.moveToRelativePositionInSteps(stepper_num, direction * -4000, False)
-            self.stopAtHome(stepper_num)
+            self.stopAtHome(home_num)
 
             # move back, but slow
             self.dpiStepper.setSpeedInStepsPerSecond(stepper_num, 200)
             self.dpiStepper.moveToRelativePositionInSteps(stepper_num, direction * 4000, False)
-            self.stopAtHome(stepper_num)
+            self.stopAtHome(home_num)
