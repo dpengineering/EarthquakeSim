@@ -142,7 +142,7 @@ class Oscillator:
         # See readme for more details
         if self.offset == 0:
             return
-        elif self.offset > 0:
+        elif self.offset > 0.0:
             self.offset = (self.targetSpeed * 0.15) + 200
         elif self.offset < 0:
             self.offset = (-self.targetSpeed * 0.15) - 200
@@ -186,17 +186,14 @@ class Oscillator:
         See ReadMe for more details
         """
         self.homing = True
-        self.dpiStepper.enableMotors(False) #ensures that stepper 1 can be moved freely
+        self.dpiStepper.enableMotors(True)
 
-        # homing motor, moving together to avoid collision
-        self.homeStepper(0, 1,1,3200)
-        sleep(5)
+        # home motor 1
+        self.homeStepper(1, 1,3200) # move positive to avoid collisions
+        sleep(0.5)
 
-        self.dpiStepper.enableMotors(True) #ensures that stepper 1 doesn't move with stepper 0
-
-        # home spiral motor
-        self.homeStepper(0, 0, -1,1600)
-        sleep(5)
+        # home spiral motor (0)
+        self.homeStepper(0, -1, 1600)
 
         # finally set home for each motor
         self.dpiStepper.setCurrentPositionInSteps(1, 0)
@@ -213,11 +210,13 @@ class Oscillator:
 
         self.homing = False
 
-    def homeStepper(self, stepper_num, home_num, direction, speed):
+    def homeStepper(self, stepper_num, direction, speed):
         """
         Skeleton logic for homing
         """
         self.dpiStepper.setSpeedInStepsPerSecond(stepper_num, speed)
+        if stepper_num == 1:
+            self.dpiStepper.setSpeedInStepsPerSecond(0, 200)
 
         results, __, __, homeAtHomeSwitchFlg = self.dpiStepper.getStepperStatus(stepper_num)
         if not results:
@@ -227,13 +226,20 @@ class Oscillator:
         if not homeAtHomeSwitchFlg:
             # move towards sensor
             self.dpiStepper.moveToRelativePositionInSteps(stepper_num, direction * 4000, False)
-            self.stopAtHome(home_num)
+            if stepper_num == 1:
+                self.dpiStepper.moveToRelativePositionInSteps(0, direction * -4000, False)
+            self.stopAtHome(stepper_num)
 
             # move away from sensor
             self.dpiStepper.moveToRelativePositionInSteps(stepper_num, direction * -4000, False)
-            self.stopAtHome(home_num)
+            if stepper_num == 1:
+                self.dpiStepper.moveToRelativePositionInSteps(0, direction * 4000, False)
+            self.stopAtHome(stepper_num)
 
             # move back, but slow
             self.dpiStepper.setSpeedInStepsPerSecond(stepper_num, 200)
             self.dpiStepper.moveToRelativePositionInSteps(stepper_num, direction * 4000, False)
-            self.stopAtHome(home_num)
+            if stepper_num == 1:
+                self.dpiStepper.setSpeedInStepsPerSecond(0, 200)
+                self.dpiStepper.moveToRelativePositionInSteps(0, direction * -4000, False)
+            self.stopAtHome(stepper_num)
