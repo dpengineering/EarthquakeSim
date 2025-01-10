@@ -112,7 +112,7 @@ class Oscillator:
         """
         Responsible for homing axis, setting default values, running motors, and starting loop, checks if doors a closed first
         """
-         # Start loop
+        # Start loop
         Clock.schedule_interval(lambda dt: self.loop(), 0.01)
 
         self.home()
@@ -189,11 +189,11 @@ class Oscillator:
         self.dpiStepper.enableMotors(True)
 
         # home motor 1
-        self.homeStepper(1, 1,3200) # move positive to avoid collisions
+        self.homeStepper(1, 1,1600)
         sleep(0.5)
 
         # home spiral motor (0)
-        self.homeStepper(0, -1, 1600)
+        self.homeStepper(0, -1, 3200)
 
         # finally set home for each motor
         self.dpiStepper.setCurrentPositionInSteps(1, 0)
@@ -216,7 +216,7 @@ class Oscillator:
         """
         self.dpiStepper.setSpeedInStepsPerSecond(stepper_num, speed)
         if stepper_num == 1:
-            self.dpiStepper.setSpeedInStepsPerSecond(0, 200)
+            self.dpiStepper.setSpeedInStepsPerSecond(0, speed)
 
         results, __, __, homeAtHomeSwitchFlg = self.dpiStepper.getStepperStatus(stepper_num)
         if not results:
