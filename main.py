@@ -7,14 +7,11 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import StringProperty, NumericProperty
 
 
 from pidev.MixPanel import MixPanel
 from pidev.kivy.PassCodeScreen import PassCodeScreen
 from pidev.kivy import DPEAButton
-from pidev.kivy import ImageButton
-from pidev.kivy.selfupdatinglabel import SelfUpdatingLabel
 
 from datetime import datetime
 time = datetime
@@ -65,24 +62,16 @@ class MainScreen(Screen):
     Class to handle the main screen and its associated touch events
     """
     # Create instance of Oscillator class using DPIStepper board 1, passes dpiComputer for sensor reading
-    HorizontalAxis = Oscillator(horizontalStepper, dpiComputer, 16,1250, 160)
+    HorizontalAxis = Oscillator(horizontalStepper, dpiComputer,1250)
 
     # Create instance of Oscillator class using DPIStepper board 0, passes dpiComputer for sensor reading
-    VerticalAxis = Oscillator(verticalStepper, dpiComputer, 16, 312, 40) #temp values
+    VerticalAxis = Oscillator(verticalStepper, dpiComputer, 312)
 
-    # Init properties referenced in Kivi UI for debug text
-    debugText = StringProperty()
     amplitudeValue = 0
     frequencyValue = 0
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.debugText = "Door Closed!"
-
-    # Provide a function for setting the debug text
-    # Later passed down into oscillator instance for logging from there
-    def log(self, text):
-        self.debugText = text
 
     # On slider changes, call Oscillator instance functions, pass in new values
     def frequencyChange(self, value):
@@ -103,10 +92,12 @@ class MainScreen(Screen):
             return
     
     # Screen changes
-    def main_screen(self):
+    @staticmethod
+    def main_screen():
         SCREEN_MANAGER.current = 'main'
 
-    def admin_action(self):
+    @staticmethod
+    def admin_action():
         """
         Hidden admin button touch event. Transitions to passCodeScreen.
         This method is called from pidev/kivy/PassCodeScreen.kv
@@ -152,10 +143,12 @@ class AdminScreen(Screen):
         """
         os.system("sudo shutdown now")
 
-    def manual_screen_change(self):
+    @staticmethod
+    def manual_screen_change():
         SCREEN_MANAGER.current = 'Manual'
 
-    def exit_program(self):
+    @staticmethod
+    def exit_program():
         """
         Quit the program. This should free all steppers and do any cleanup necessary
         :return: None

@@ -2,7 +2,7 @@ from time import sleep
 from kivy.clock import Clock
 
 class Oscillator:
-    def __init__(self, dpiStepper, dpiComputer, microstepping, accel, speed):
+    def __init__(self, dpiStepper, dpiComputer, accel):
         # Global vars
         self.LINEAR_OFFSET = 100
         self.dpiComputer = dpiComputer
@@ -21,15 +21,11 @@ class Oscillator:
             print("Communication with the DPiStepper board failed.")
 
         # set micro stepping as set on drivers
-        self.dpiStepper.setMicrostepping(microstepping)
+        self.dpiStepper.setMicrostepping(16)
 
         # set acceleration 
-        self.dpiStepper.setAccelerationInStepsPerSecondPerSecond(0, accel * microstepping)
-        self.dpiStepper.setAccelerationInStepsPerSecondPerSecond(1, accel * microstepping)
-
-        # set default speed
-        self.dpiStepper.setSpeedInStepsPerSecond(0, speed * microstepping)
-        self.dpiStepper.setSpeedInStepsPerSecond(1, speed * microstepping)
+        self.dpiStepper.setAccelerationInStepsPerSecondPerSecond(0, accel * 16)
+        self.dpiStepper.setAccelerationInStepsPerSecondPerSecond(1, accel * 16)
 
     def stop(self):
         """

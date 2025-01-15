@@ -6,7 +6,6 @@ There is no need to copy the .kv file into your project simply import this class
 
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
-from kivy.app import App
 import os.path
 
 PASSWORD = '7266'
