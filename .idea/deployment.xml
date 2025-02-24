@@ -16,6 +16,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="pi@earthquake-simulator-pi.local:22 password (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/pi/Alex" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
     </serverData>
     <option name="myAutoUpload" value="ALWAYS" />
   </component>

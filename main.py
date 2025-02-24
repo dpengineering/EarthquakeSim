@@ -69,6 +69,7 @@ class MainScreen(Screen):
 
     amplitudeValue = 0
     frequencyValue = 0
+    started = False # Used to track whether the homing process has happened
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -85,10 +86,13 @@ class MainScreen(Screen):
     # On button presses, call Oscillator instance functions as well
     def stop(self):
         self.HorizontalAxis.stop()
+        self.started = False
 
     def start(self):
+        self.started = True
         if self.amplitudeValue == 0 and self.frequencyValue == 0:
-            self.HorizontalAxis.start()
+            #self.HorizontalAxis.start() #should work perfectly fine with current code, unless mechanical issues crop up
+            self.VerticalAxis.start()  #may experience problems due to funky mechanical issues - if code needs updating, make sure to not affect the horizontal functionality
             return
     
     # Screen changes
