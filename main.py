@@ -91,7 +91,7 @@ class MainScreen(Screen):
     def start(self):
         self.started = True
         if self.amplitudeValue == 0 and self.frequencyValue == 0:
-            #self.HorizontalAxis.start() #should work perfectly fine with current code, unless mechanical issues crop up
+            self.HorizontalAxis.start() #should work perfectly fine with current code, unless mechanical issues crop up
             self.VerticalAxis.start()  #may experience problems due to funky mechanical issues - if code needs updating, make sure to not affect the horizontal functionality
             return
     
