@@ -1,7 +1,9 @@
 
 # Earthquake Simulator Programming/Mechanics Guide
 
-*By Gabriel Casselman* 🤓 [Contact 💌](https://2023mechatronicsgabrielcasselman.weebly.com/contact.html)  
+*By Gabriel Casselman (2023) 🤓 [Contact](https://2023mechatronicsgabrielcasselman.weebly.com/contact.html)*
+
+*Updated by Alex Ortiz (2024-2025) 💌 [Contact](https://ajentzschortiz.wixsite.com/academic-portfolio/contact)*
 
 Welcome future software person 🫡 Your about to have the time of your life delving into the code of this project. This guide is intended to familiarize you with the structure of the code, and the mechanics of the project from a programming perspective. 🥶
 
@@ -142,7 +144,15 @@ During both `Frequency` and `Amplitude` changes, the value, but not direction of
 
 Using the python library [obspy](https://docs.obspy.org/), we can pull real earthquake data and explore events, stations, and waveforms.  
 
-### My Thoughts
+### Current State of the Project
+- Right now, the code is in a debugging stage rather than a showcase stage, meaning it isn’t very interesting to interact with.
+- `main.py` is pretty straightforward and shouldn’t require changes besides incorporating real-life earthquakes. Instead of sliders, there should be buttons with the names of real earthquakes. Those earthquakes will each have specified frequency and amplitude values, which can be used by directly calling `frequencyChange()` or `amplitudeChange()`.
+- `start()` will only run when the `Amplitude` and `Frequency` sliders are set to zero, so those values still need to be properly incorporated. 
+- The `Oscillator` class has two instances: `HorizontalAxis` and `VerticalAxis`.
+- `VerticalAxis` may need updates due to mechanical changes made to the oscillator.
+- When converting earthquake data, decide which two of the three axes to include in the simulation (x, y, z), since the Earthquake Simulator only has two axes of movement to work with.
+
+### Future Goals/Improvements
 
 1. Pull real data from and earthquake
 2. Filter the data into a nice waveform
