@@ -23,7 +23,8 @@ Welcome future software person 🫡 Your about to have the time of your life del
     - [Control Loop](#control-loop)
     - [Offset Updating](#offset-updating)
   - [Earthquake Simulation](#earthquake-simulation)
-    - [My Thoughts](#my-thoughts)
+    - [Current State of the Project](#current-state-of-the-project)
+    - [Future Goals and Improvements](#future-goals-and-improvements)
     - [Some notes](#some-notes)
 
 ---
@@ -152,7 +153,7 @@ Using the python library [obspy](https://docs.obspy.org/), we can pull real eart
 - `VerticalAxis` may need updates due to mechanical changes made to the oscillator.
 - When converting earthquake data, decide which two of the three axes to include in the simulation (x, y, z), since the Earthquake Simulator only has two axes of movement to work with.
 
-### Future Goals/Improvements
+### Future Goals and Improvements
 
 1. Pull real data from and earthquake
 2. Filter the data into a nice waveform
